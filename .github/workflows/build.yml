@@ -37,7 +37,7 @@ jobs:
       - name: capture fabric build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Artifacts
+          name: fabric-Artifacts
           path: fabric/build/libs/
 
       - name: build forge
@@ -49,5 +49,5 @@ jobs:
       - name: capture forge build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Artifacts
+          name: forge-Artifacts
           path: forge/build/libs/
