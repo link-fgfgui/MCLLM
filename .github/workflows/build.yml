@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'microsoft'
+          distribution: 'temurin'
 
       - name: build fabric
         run: |
@@ -34,20 +34,16 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
 
-      - name: capture fabric build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: fabric-Artifacts
-          path: fabric/build/libs/
-
       - name: build forge
         run: |
           cd forge
           chmod +x ./gradlew
           ./gradlew build
 
-      - name: capture forge build artifacts
-        uses: actions/upload-artifact@v3
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v2
         with:
-          name: forge-Artifacts
-          path: forge/build/libs/
+          name: Artifacts
+          path: |
+            fabric/build/libs/
+            forge/build/libs/
