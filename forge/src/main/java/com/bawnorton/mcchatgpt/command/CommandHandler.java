@@ -53,16 +53,18 @@ public class CommandHandler {
                 .then(Commands.argument("token", StringArgumentType.string()).executes(context -> {
                     ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
                     String token = StringArgumentType.getString(context, "token");
-                    if(token.length() != 51) {
-                        MCChatGPT.LOGGER.error("Invalid token length");
-                        source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"), false);
-                        return 0;
-                    }
-                    if(!token.startsWith("sk-")) {
-                        MCChatGPT.LOGGER.error("Invalid token prefix");
-                        source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"), false);
-                        return 0;
-                    }
+                    // if(token.length() != 51) {
+                    // MCChatGPT.LOGGER.error("Invalid token length");
+                    // source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"),
+                    // false);
+                    // return 0;
+                    // }
+                    // if(!token.startsWith("sk-")) {
+                    // MCChatGPT.LOGGER.error("Invalid token prefix");
+                    // source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"),
+                    // false);
+                    // return 0;
+                    // }
                     Config.getInstance().token = SecureTokenStorage.encrypt(token);
                     ConfigManager.saveConfig();
                     MCChatGPT.startService();

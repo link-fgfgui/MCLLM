@@ -1,15 +1,17 @@
 {
 	"schemaVersion": 1,
-	"id": "mcchatgpt",
+	"id": "mcchatgptc",
 	"version": "${version}",
-	"name": "MCChatGPT",
-	"description": "A mod that provides a chat command to interact with ChatGPT in the context of Minecraft.",
+	"name": "MCChatGPTC",
+	"description": "A mod that provides a chat command to interact with LLM in the context of Minecraft.",
 	"authors": [
-		"Bawnorton"
+		"Bawnorton",
+		"105hua",
+		"link-fgfgui"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/link-fgfgui/MCChatGPT",
+		"sources": "https://github.com/link-fgfgui/MCChatGPT"
 	},
 	"license": "MIT License",
 	"icon": "assets/mcchatgpt/icon.png",

@@ -68,7 +68,8 @@ public class MCChatGPT {
     }
 
     public static void startService() {
-        service = new OpenAiService(SecureTokenStorage.decrypt(Config.getInstance().secret, Config.getInstance().token));
+        service = new OpenAiService(SecureTokenStorage.decrypt(Config.getInstance().secret, Config.getInstance().token),
+                Config.getInstance().baseurl);
     }
 
     public static boolean notAuthed() {
@@ -186,7 +187,8 @@ public class MCChatGPT {
         ChatMessage questionMessage = new ChatMessage("user", question);
         conversation.addMessage(questionMessage);
         conversation.setPreviewMessage(questionMessage);
-        ChatCompletionRequest req = ChatCompletionRequest.builder().messages(conversation.getMessages()).model("gpt-3.5-turbo").build();
+        ChatCompletionRequest req = ChatCompletionRequest.builder().messages(conversation.getMessages())
+                .model(Config.getInstance().model).build();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
         try {
@@ -205,9 +207,13 @@ public class MCChatGPT {
             while (conversation.messageCount() > 10) {
                 conversation.removeMessage(1); // don't remove the first message, as it's the minecraft context
             }
-            player.displayClientMessage(Component.literal("<ChatGPT> " + replyMessage.getContent().replaceAll("^\\s+|\\s+$", "")).setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("mcchatgpt.token.usage", tokensUsed, cost)))), false);
+            player.displayClientMessage(
+                    Component.literal("<LLM> " + replyMessage.getContent().replaceAll("^\\s+|\\s+$", ""))
+                            .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    Component.translatable("mcchatgpt.token.usage", tokensUsed, cost)))),
+                    false);
         } catch (RuntimeException e) {
-            MCChatGPT.LOGGER.error("Error while communicating with OpenAI", e);
+            MCChatGPT.LOGGER.error("Error while communicating with Server", e);
             if(e.getMessage().toLowerCase().contains("exceeded your current quota")) {
                 player.displayClientMessage(Component.translatable("mcchatgpt.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://platform.openai.com/account/usage")).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("https://platform.openai.com/account/usage")))), false);
             } else if (e.getMessage().toLowerCase().contains("maximum context length")) {

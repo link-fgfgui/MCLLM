@@ -29,7 +29,9 @@ public class Config {
     @Expose
     @SerializedName("secret")
     public String secret;
-
+    @Expose
+    @SerializedName("baseurl")
+    public String baseurl;
     private Config() {
     }
 

@@ -54,7 +54,8 @@ public class MCChatGPTClient implements ClientModInitializer {
     }
 
     public static void startService() {
-        service = new OpenAiService(SecureTokenStorage.decrypt(Config.getInstance().secret, Config.getInstance().token));
+        service = new OpenAiService(SecureTokenStorage.decrypt(Config.getInstance().secret, Config.getInstance().token),
+                Config.getInstance().baseurl);
     }
 
     public static boolean notAuthed() {
@@ -96,7 +97,8 @@ public class MCChatGPTClient implements ClientModInitializer {
         }
         conversations.add(new Conversation());
         conversationIndex = conversations.size() - 1;
-        conversations.get(conversationIndex).addMessage(new ChatMessage("system", "You are an AI assistant in the game Minecraft version 1.19.4. Limit your responses to 256 characters. Assume the player cannot access commands unless explicitly asked for them. You may be provided with player context when asked a question. Don't answer beyond what is asked. Don't mention the player context, just use it"));
+        conversations.get(conversationIndex).addMessage(new ChatMessage("system",
+                "You are an AI assistant in the game Minecraft version 1.20.1. Limit your responses to 256 characters. Assume the player cannot access commands unless explicitly asked for them. You may be provided with player context when asked a question. Don't answer beyond what is asked. Don't mention the player context, just use it"));
         return true;
     }
 
@@ -188,9 +190,12 @@ public class MCChatGPTClient implements ClientModInitializer {
             while (conversation.messageCount() > 10) {
                 conversation.removeMessage(1); // don't remove the first message, as it's the minecraft context
             }
-            player.sendMessage(Text.literal("<ChatGPT> " + replyMessage.getContent().replaceAll("^\\s+|\\s+$", "")).setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("mcchatgpt.token.usage", tokensUsed, cost)))), false);
+            player.sendMessage(Text.literal("<LLM> " + replyMessage.getContent().replaceAll("^\\s+|\\s+$", ""))
+                    .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            Text.translatable("mcchatgpt.token.usage", tokensUsed, cost)))),
+                    false);
         } catch (RuntimeException e) {
-            MCChatGPTClient.LOGGER.error("Error while communicating with OpenAI", e);
+            MCChatGPTClient.LOGGER.error("Error while communicating with Server", e);
             if (e.getMessage().toLowerCase().contains("exceeded your current quota")) {
                 player.sendMessage(Text.translatable("mcchatgpt.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://platform.openai.com/account/usage")).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("https://platform.openai.com/account/usage")))));
             } else if (e.getMessage().toLowerCase().contains("maximum context length")) {

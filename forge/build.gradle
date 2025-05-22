@@ -5,8 +5,8 @@ plugins {
 }
 
 version = '0.2.1'
-group = 'com.bawnorton.mcchatgpt' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'mcchatgpt-forge'
+group = 'com.linkfgfgui.mcchatgptc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'mcchatgptc-forge'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

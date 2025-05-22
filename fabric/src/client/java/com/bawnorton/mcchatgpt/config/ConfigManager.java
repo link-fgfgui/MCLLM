@@ -26,7 +26,8 @@ public class ConfigManager {
         if (config.temperature == null || config.temperature < 0 || config.temperature > 2) config.temperature = 1.0;
         if (config.estimatedCostPerToken == null || config.estimatedCostPerToken < 0) config.estimatedCostPerToken = 2e-6F;
         if (config.model == null) config.model = "gpt-3.5-turbo";
-
+        if (config.baseurl == null)
+            config.baseurl = "https://api.openai.com/";
         Config.update(config);
         save();
         MCChatGPTClient.LOGGER.info("Loaded config");

@@ -1,16 +1,18 @@
-MCChatGPT
+MC ChatGPT Compatible
 ================
-### A mod that provides a ChatGPT interface inside minecraft
-
-[![Modrinth](https://img.shields.io/modrinth/dt/mcchatgpt?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/mcchatgpt)
-[![CurseForge](https://cf.way2muchnoise.eu/full_835315_downloads.svg)](https://curseforge.com/minecraft/mc-mods/mcchatgpt)
+### A mod that provides a LLM interface inside minecraft
 
 ### This model knows it's inside Minecraft, and will respond accordingly.
 - The model is limited by ChatGPT's training data, which ended around when 1.17 was released.
+- ChatGPT gpt-3.5-turbo这个模型只知道1.17及以前的事情,其它模型的知识库截止日期请自行查询
+
+两个版本硬编码都一套一套的,只能保证deepseek的基本使用
 
 ### Commands
 - Use `/mcchatgpt-auth <token>` with your OpenAI token to authenticate with the API
   - You can get a token from [OpenAI API Keys](https://platform.openai.com/account/api-keys)
+- 使用 `/mcchatgpt-auth <token>` 填入token
+  - deepseek token 获取 [deepseek API Keys](https://platform.deepseek.com/api_keys)
 - Use `/ask <question>` to ask the model a question, the model will respond in the chat with context from the last 10 messages.
   - Hover over the message to see the number of tokens used and approximate cost of the API request.
 - Use `/setcontextlevel <0-3>` to set the context level of the model.
@@ -29,6 +31,18 @@ MCChatGPT
   - This will provide the conversation id, and the last message you sent in the conversation.
 
 ### Config
+1. 关闭游戏
+2. 去`.minecraft/config/mcchatgpt.json`修改配置文件
+- deepseek
+  - baseurl `https://api.deepseek.com/`
+  - model `deepseek-chat`&`deepseek-reasoner`
+- 讯飞星火 
+  - baseurl `https://spark-api-open.xf-yun.com/`
+  - model `Lite`(Spark Lite)
+
+欢迎补充
+
+
 - model: The model used for the API requests. 
   - Must support Chat Completions otherwise an error will occur.
   - `gpt-3.5-turbo` is the default value.
@@ -39,10 +53,12 @@ MCChatGPT
   - `1.0` is the default value.
 
 ### Installation
-1. Download the latest version of the mod from the [releases page](https://www.curseforge.com/minecraft/mc-mods/mc-chat-gpt/files)
+1. Download the latest version of the mod from the [releases page](https://github.com/link-fgfgui/MCChatGPT/releases)
    - If you are using the fabric version, please download the latest version of [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 2. Place the downloaded mod files in your mods folder
 3. Launch Minecraft
 
 ### Reporting Bugs
-If you find any bugs, please report them on the [issue tracker](https://github.com/Benjamin-Norton/MCGPT/issues).
+我个人没有在Minecraft中使用LLM的需求,fork仅用做deepseek测试,可以去issues提bug但是我不会修,欢迎PR,当有人接手原项目时此仓库将存档
+
+I personally don't have a need to use LLM in Minecraft. The fork is only used for deepseek testing. You can go to issues to report bugs, but I won't fix them. PRs are welcome. This repository will be archived when someone takes over the [original repo](https://github.com/Bawnorton/MCChatGPT).
