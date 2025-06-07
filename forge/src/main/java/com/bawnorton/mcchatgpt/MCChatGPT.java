@@ -10,6 +10,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -54,7 +55,9 @@ public class MCChatGPT {
     private static final ExecutorService executor;
 
     private static OpenAiService service;
+    @Getter
     private static List<Conversation> conversations;
+    @Getter
     private static int conversationIndex = 0;
 
     private static final double COST_PER_TOKEN = 2e-6; // $0.000002 per token (https://openai.com/pricing)
@@ -89,14 +92,6 @@ public class MCChatGPT {
         return false;
     }
 
-    public static List<Conversation> getConversations() {
-        return conversations;
-    }
-
-    public static int getConversationIndex() {
-        return conversationIndex;
-    }
-
     public static void setConversationIndex(int index) {
         if (index >= 0 && index < conversations.size()) {
             conversationIndex = index;
@@ -111,7 +106,7 @@ public class MCChatGPT {
         }
         conversations.add(new Conversation());
         conversationIndex = conversations.size() - 1;
-        conversations.get(conversationIndex).addMessage(new ChatMessage("system", "Context: You are an AI assistant in the game Minecraft version 1.19.4. Limit your responses to 256 characters. Assume the player cannot access commands unless explicitly asked for them. Do not simulate conversations"));
+        conversations.get(conversationIndex).addMessage(new ChatMessage("system", "Context: You are an AI assistant in the game Minecraft version "+Minecraft.getInstance().getLaunchedVersion()+". Limit your responses to 256 characters. Assume the player cannot access commands unless explicitly asked for them. Do not simulate conversations"));
         return true;
     }
 
@@ -137,7 +132,7 @@ public class MCChatGPT {
         Context.Builder contextBuilder = Context.builder();
         switch (Config.getInstance().contextLevel) {
             case 3:
-                List<LivingEntity> nearbyEntities = player.getLevel().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT.selector(entity -> entity != player), player, player.getBoundingBox().inflate(64));
+                List<LivingEntity> nearbyEntities = player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT.selector(entity -> entity != player), player, player.getBoundingBox().inflate(64));
                 if (target instanceof EntityHitResult entityHitResult) {
                     Entity entity = entityHitResult.getEntity();
                     if (entity instanceof LivingEntity livingEntity) {
@@ -147,14 +142,15 @@ public class MCChatGPT {
 
                 contextBuilder.addEntities(nearbyEntities);
             case 2:
-                Holder<Biome> biome = player.getLevel().getBiome(player.blockPosition());
+
+                Holder<Biome> biome = player.level().getBiome(player.blockPosition());
                 biome.unwrapKey().ifPresent(biomeKey -> contextBuilder.addBiome(biomeKey.location().getPath()));
                 Block block = null;
                 if(target instanceof BlockHitResult blockHitResult) {
-                    block = player.getLevel().getBlockState(blockHitResult.getBlockPos()).getBlock();
+                    block = player.level().getBlockState(blockHitResult.getBlockPos()).getBlock();
                 }
                 contextBuilder.addBlockTarget(block);
-                Holder<DimensionType> dimension = player.getLevel().dimensionTypeRegistration();
+                Holder<DimensionType> dimension = player.level().dimensionTypeRegistration();
                 dimension.unwrapKey().ifPresent(dimensionKey -> contextBuilder.addDimension(dimensionKey.location().getPath()));
 
             case 1:
@@ -177,7 +173,7 @@ public class MCChatGPT {
     }
 
     private static void askSync(String question) {
-        if (conversations.size() == 0) {
+        if (conversations.isEmpty()) {
             nextConversation();
         }
 

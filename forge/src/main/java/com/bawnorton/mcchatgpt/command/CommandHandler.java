@@ -41,7 +41,7 @@ public class CommandHandler {
                 .then(Commands.argument("question", StringArgumentType.greedyString()).executes(context -> {
                     ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
                     String question = StringArgumentType.getString(context, "question");
-                    source.sendSuccess(Component.literal("§7<" + Minecraft.getInstance().player.getDisplayName().getString() + "> " + question), false);
+                    source.sendSuccess(()->Component.literal("§7<" + Minecraft.getInstance().player.getDisplayName().getString() + "> " + question), false);
                     MCChatGPT.ask(question);
                     return 1;
                 }));
@@ -55,20 +55,20 @@ public class CommandHandler {
                     String token = StringArgumentType.getString(context, "token");
                     // if(token.length() != 51) {
                     // MCChatGPT.LOGGER.error("Invalid token length");
-                    // source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"),
+                    // source.sendSuccess(()->Component.translatable("mcchatgpt.auth.invalid.token"),
                     // false);
                     // return 0;
                     // }
                     // if(!token.startsWith("sk-")) {
                     // MCChatGPT.LOGGER.error("Invalid token prefix");
-                    // source.sendSuccess(Component.translatable("mcchatgpt.auth.invalid.token"),
+                    // source.sendSuccess(()->Component.translatable("mcchatgpt.auth.invalid.token"),
                     // false);
                     // return 0;
                     // }
                     Config.getInstance().token = SecureTokenStorage.encrypt(token);
                     ConfigManager.saveConfig();
                     MCChatGPT.startService();
-                    source.sendSuccess(Component.translatable("mcchatgpt.auth.success"), false);
+                    source.sendSuccess(()->Component.translatable("mcchatgpt.auth.success"), false);
                     return 1;
                 }));
         dispatcher.register(builder);
@@ -78,12 +78,13 @@ public class CommandHandler {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("listconversations").executes(context -> {
             ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
             List<Conversation> conversations = MCChatGPT.getConversations();
-            source.sendSuccess(Component.translatable("mcchatgpt.conversation.list"), false);
+            source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.list"), false);
             for (int i = 0; i < conversations.size(); i++) {
                 Conversation conversation = conversations.get(i);
                 if(conversation.messageCount() < 2) continue;
                 String lastQuestion = conversation.getPreviewMessage().getContent();
-                source.sendSuccess(Component.literal("§b[MCChatGPT]: §r" + (i + 1) + ": " + lastQuestion), false);
+                int finalI = i;
+                source.sendSuccess(()->(Component.literal("§b[MCChatGPT]: §r" + (finalI + 1) + ": " + lastQuestion)), false);
             }
             return 1;
         });
@@ -97,9 +98,9 @@ public class CommandHandler {
                 boolean newConversation = MCChatGPT.nextConversation();
                 int index = MCChatGPT.getConversationIndex();
                 if(newConversation) {
-                    source.sendSuccess(Component.translatable("mcchatgpt.conversation.new", index + 1), false);
+                    source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.new", index + 1), false);
                 } else {
-                    source.sendSuccess(Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
+                    source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
                 }
                 return 1;
             } catch (IllegalStateException e) {
@@ -115,7 +116,7 @@ public class CommandHandler {
                 ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
                 MCChatGPT.previousConversation();
                 int index = MCChatGPT.getConversationIndex();
-                source.sendSuccess(Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
+                source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
                 return 1;
             } catch (IllegalStateException e) {
                 return 0;
@@ -130,11 +131,11 @@ public class CommandHandler {
                     ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
                     int index = IntegerArgumentType.getInteger(context, "index") - 1;
                     if (index >= MCChatGPT.getConversations().size()) {
-                        source.sendSuccess(Component.translatable("mcchatgpt.conversation.invalid"), false);
+                        source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.invalid"), false);
                         return 0;
                     }
                     MCChatGPT.setConversationIndex(index);
-                    source.sendSuccess(Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
+                    source.sendSuccess(()->Component.translatable("mcchatgpt.conversation.continue", index + 1), false);
                     return 1;
                 }));
         dispatcher.register(builder);
@@ -147,7 +148,7 @@ public class CommandHandler {
                     int level = IntegerArgumentType.getInteger(context, "level");
                     Config.getInstance().contextLevel = level;
                     ConfigManager.saveConfig();
-                    source.sendSuccess(Component.translatable("mcchatgpt.context.level.set", level, Component.translatable("mcchatgpt.context.level." + level).getString()), false);
+                    source.sendSuccess(()->(Component.translatable("mcchatgpt.context.level.set", level, Component.translatable("mcchatgpt.context.level." + level).getString())),false);
                     return 1;
                 }));
         dispatcher.register(builder);
@@ -157,7 +158,7 @@ public class CommandHandler {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("getcontextlevel").executes(context -> {
             ClientCommandSourceStack source = (ClientCommandSourceStack) context.getSource();
             int level = Config.getInstance().contextLevel;
-            source.sendSuccess(Component.translatable("mcchatgpt.context.level.get", level, Component.translatable("mcchatgpt.context.level." + level).getString()), false);
+            source.sendSuccess(()->Component.translatable("mcchatgpt.context.level.get", level, Component.translatable("mcchatgpt.context.level." + level).getString()), false);
             return 1;
         });
         dispatcher.register(builder);

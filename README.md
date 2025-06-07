@@ -6,7 +6,6 @@ MC ChatGPT Compatible
 - The model is limited by ChatGPT's training data, which ended around when 1.17 was released.
 - ChatGPT gpt-3.5-turbo这个模型只知道1.17及以前的事情,其它模型的知识库截止日期请自行查询
 
-两个版本硬编码都一套一套的,只能保证deepseek的基本使用
 
 ### Commands
 - Use `/mcchatgpt-auth <token>` with your OpenAI token to authenticate with the API
@@ -39,6 +38,10 @@ MC ChatGPT Compatible
 - 讯飞星火 
   - baseurl `https://spark-api-open.xf-yun.com/`
   - model `Lite`(Spark Lite)
+- freeqwq (free)(**China IP** needed)
+  - baseurl `https://api.suanli.cn/`
+  - model `free:QwQ-32B`
+  API KEY `sk-W0rpStc95T7JVYVwDYc29IyirjtpPPby6SozFMQr17m8KWeo`
 
 欢迎补充
 
@@ -62,3 +65,12 @@ MC ChatGPT Compatible
 我个人没有在Minecraft中使用LLM的需求,fork仅用做deepseek测试,可以去issues提bug但是我不会修,欢迎PR,当有人接手原项目时此仓库将存档
 
 I personally don't have a need to use LLM in Minecraft. The fork is only used for deepseek testing. You can go to issues to report bugs, but I won't fix them. PRs are welcome. This repository will be archived when someone takes over the [original repo](https://github.com/Bawnorton/MCChatGPT).
+
+### TODO
+0. let "timeout" Duration configurable
+1. let "sendToAdmins" configurable
+2. `<think>` Reason tag visibility configurable (Can be changed in game)
+
+After completing the remaining TODOs, I will begin working on mod support for Minecraft 1.21.1. 
+
+Contributions via pull requests are welcome.
