@@ -44,13 +44,15 @@ jobs:
           path: build/libs/
       
       - name: Remove dev-shadow jars
-        run: rm -f build/libs/*dev-shadow*.jar
+        run: |
+          rm -f build/libs/fabric/build/libs/*dev-shadow*.jar
+          rm -f build/libs/neoforge/build/libs/*dev-shadow*.jar
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          files: build/libs/*.jar
+          files: build/libs/**/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
