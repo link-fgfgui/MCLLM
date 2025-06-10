@@ -1,0 +1,22 @@
+{
+  "mcllm.auth.success": "§b[MCLLM]: §a成功认证",
+  "mcllm.auth.message1": "§c请使用 /mcllm-auth <token> 命令通过 LLM 服务令牌进行认证",
+  "mcllm.auth.message2": "§c如果您没有令牌，可以在此生成一个：",
+  "mcllm.auth.invalid.token": "§b[MCLLM]: §c无效的令牌。",
+  "mcllm.ask.error": "§b[MCLLM]: §c与 LLM 服务通信时发生错误。请检查您的网络连接，或稍后重试。",
+  "mcllm.ask.quota": "§b[MCLLM]: §c您已超出当前 LLM API 配额。点击查看您的计划和账单详情。",
+  "mcllm.ask.excessive.context": "§b[MCLLM]: §cLLM API 拒绝处理您的消息，因为上下文内容过多。请尝试使用较低的上下文级别重试。",
+  "mcllm.conversation.new": "§b[MCLLM]: §f开始新对话 (%s)",
+  "mcllm.conversation.continue": "§b[MCLLM]: §f继续对话 (%s)",
+  "mcllm.conversation.list": "§b[MCLLM]: §f对话列表：",
+  "mcllm.conversation.invalid": "§b[MCLLM]: §c无效的对话 ID。",
+  "mcllm.context.level.get": "§b[MCLLM]: §f当前上下文级别：%s (%s)",
+  "mcllm.context.level.set": "§b[MCLLM]: §f上下文级别设置为 %s (%s)",
+  "mcllm.context.level.0": "无信息",
+  "mcllm.context.level.1": "玩家信息",
+  "mcllm.context.level.2": "玩家和世界信息",
+  "mcllm.context.level.3": "玩家、世界和实体信息",
+  "mcllm.token.usage": "已使用 %s 个令牌 ($%s)",
+  "mcllm.reply.think": "思考：",
+  "mcllm.set.success": "§b[MCLLM]: §a设定成功"
+}

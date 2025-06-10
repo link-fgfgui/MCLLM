@@ -1,0 +1,22 @@
+{
+  "mcllm.auth.success": "§b[MCLLM]: §aSuccessfully Authenticated",
+  "mcllm.auth.message1": "§cPlease authenticate with an LLM token using /mcllm-auth <token>",
+  "mcllm.auth.message2": "§cIf you do not have a token, you can generate one here:",
+  "mcllm.auth.invalid.token": "§b[MCLLM]: §cInvalid token.",
+  "mcllm.ask.error": "§b[MCLLM]: §cAn error occurred while communicating with LLM service. Please check your internet connection, or try again later.",
+  "mcllm.ask.quota": "§b[MCLLM]: §cYou have exceeded your current LLM API quota. Click me to view your plan and billing details.",
+  "mcllm.ask.excessive.context": "§b[MCLLM]: §cLLM API refused to process your message as it contains too much context. Please try again with a lower context level.",
+  "mcllm.conversation.new": "§b[MCLLM]: §fStarted a new conversation (%s)",
+  "mcllm.conversation.continue": "§b[MCLLM]: §fContinuing conversation (%s)",
+  "mcllm.conversation.list": "§b[MCLLM]: §fConversations:",
+  "mcllm.conversation.invalid": "§b[MCLLM]: §cInvalid conversation ID.",
+  "mcllm.context.level.get": "§b[MCLLM]: §fCurrent context level: %s (%s)",
+  "mcllm.context.level.set": "§b[MCLLM]: §fContext level set to %s (%s)",
+  "mcllm.context.level.0": "no information",
+  "mcllm.context.level.1": "player information",
+  "mcllm.context.level.2": "player and world information",
+  "mcllm.context.level.3": "player, world, and entity information",
+  "mcllm.token.usage": "Used %s tokens ($%s)",
+  "mcllm.reply.think": "think: ",
+  "mcllm.set.success": "§b[MCLLM]: §aSuccessfully Set"
+}

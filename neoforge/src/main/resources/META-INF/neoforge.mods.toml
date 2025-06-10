@@ -1,0 +1,45 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+issueTrackerURL = "https://github.com/link-fgfgui/MCLLM/issues"
+license = "GNU GPL 3.0"
+
+[[mods]]
+modId = "mcllm"
+version = "${version}"
+displayName = "MCLLM"
+authors = "link-fgfgui,Bawnorton"
+description = '''
+MCLLM is a fork of MCChatGPT for players who want to use non-OpenAI LLM servers. You are not locked into OpenAI's service and can use alternatives like DeepSeek, Claude, Gemini, among others.
+'''
+#logoFile = ""
+
+[[dependencies.mcllm]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.mcllm]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.mcllm]]
+modId = "architectury"
+type = "required"
+versionRange = "[13.0.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.mcllm]]
+modId = "kotlinforforge"
+type = "required"
+versionRange = "[5.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "mcllm.mixins.json"

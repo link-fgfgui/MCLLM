@@ -1,43 +1,39 @@
 {
-	"schemaVersion": 1,
-	"id": "mcchatgptc",
-	"version": "${version}",
-	"name": "MCChatGPTC",
-	"description": "A mod that provides a chat command to interact with LLM in the context of Minecraft.",
-	"authors": [
-		"Bawnorton",
-		"105hua",
-		"link-fgfgui"
-	],
-	"contact": {
-		"homepage": "https://github.com/link-fgfgui/MCChatGPT",
-		"sources": "https://github.com/link-fgfgui/MCChatGPT"
-	},
-	"license": "MIT License",
-	"icon": "assets/mcchatgpt/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-          "com.bawnorton.mcchatgpt.MCChatGPT"
-		],
-		"client": [
-			"com.bawnorton.mcchatgpt.MCChatGPTClient"
-		]
-	},
-	"mixins": [
-		"mcchatgpt.mixins.json",
-		{
-			"config": "mcchatgpt.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.14.22",
-		"minecraft": "1.20.1",
-		"java": ">=17",
-		"fabric-api": ">=0.88.1"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "mcllm",
+  "version": "${version}",
+  "name": "MCLLM",
+  "description": "MCLLM is a fork of MCChatGPT for players who want to use non-OpenAI LLM servers. You are not locked into OpenAI's service and can use alternatives like DeepSeek, Claude, Gemini, among others.",
+  "authors": [
+    "link-fgfgui",
+    "Bawnorton"
+  ],
+  "contact": {
+    "homepage": "https://github.com/link-fgfgui/MCLLM"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/mcllm/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.linkfgfgui.mcllm.fabric.McllmFabric"
+    ],
+    "client": [
+      "io.github.linkfgfgui.mcllm.fabric.client.McllmFabricClient"
+    ]
+  },
+  "mixins": [
+    "mcllm.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "architectury": ">=13.0.8",
+    "fabric-api": "*",
+    "fabric-language-kotlin": ">=1.13.3+kotlin.2.1.21"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }

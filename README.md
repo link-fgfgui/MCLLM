@@ -1,19 +1,81 @@
-MC ChatGPT Compatible
+MCLLM
 ================
+
+
+
+<details>
+
+<summary>中文-简体 zh-Hans</summary>
+
+### 一个在Minecraft中提供LLM交互的模组
+
+<!-- [![Modrinth](https://img.shields.io/modrinth/dt/mcchatgpt?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/mcchatgpt)
+[![CurseForge](https://cf.way2muchnoise.eu/full_835315_downloads.svg)](https://curseforge.com/minecraft/mc-mods/mcchatgpt) -->
+
+### 这个模型知道自己在Minecraft中，并会根据此环境进行响应。
+- 模型受限于LLM服务提供者的训练数据
+
+### 命令
+- 使用 `/mcllm-setbaseurl "https://api.deepseek.com/v1"` 切换到DeepSeek服务上
+- 使用 `/mcllm-auth <token>` 配合你的DeepSeek密钥进行API认证
+  - 你可以从 [DeepSeek API Keys](https://platform.deepseek.com/api_keys) 获取密钥
+- 使用 `/ask <question>` 向模型提问，模型会在聊天窗口中根据最近10条消息的上下文进行回复。
+  - 使用 `/setisshowcost true`让输出文本的末尾加一个`(Cost: $6.0E-4)`(默认为true)
+    - 鼠标悬停在消息上可查看使用的令牌数和API请求的大约费用。(token对应的价格请自行在配置文件中更改)
+- 使用 `/setcontextlevel <0-3>` 设置模型的上下文级别。
+  - 上下文级别越高，模型获取的关于世界和玩家的信息越多，但每次API请求的费用也越高。
+  - 0：无信息（默认）
+  - 1：玩家信息
+    - 每次请求增加约100个令牌
+  - 2：玩家和世界信息
+    - 每次请求增加约200个令牌
+  - 3：玩家、世界和实体信息
+    - 每次请求增加约1000个令牌
+- 使用 `/nextconversation` 进入下一个对话，或与模型开始新对话。
+- 使用 `/previousconversation` 返回上一个与模型的对话。
+- 使用 `/setconversation <conversationid>` 将与模型的对话设置为特定对话。
+- 使用 `/listconversations` 列出你与模型的所有对话。
+  - 将显示对话ID以及你在该对话中发送的最后一条消息。
+
+### 配置
+- model：用于API请求的模型。
+  - 必须支持Chat Completions，否则会报错。
+  - 默认值为 `gpt-3.5-turbo`。
+    - 如果更改模型，你可能需要调整配置文件中的 estimated_cost_per_token 值以匹配新模型。
+  - 你可以在 [这里](https://platform.openai.com/docs/models/overview) 找到模型列表。
+- temperature：API请求使用的温度参数。
+  - 范围在0到2之间，值越高，回复越有创意；值越低，回复越确定。
+  - 默认值为 `1.0`。
+
+### 安装
+1. 从 [发布页面](https://github.com/link-fgfgui/MCLLM/releases) 下载最新版本的模组
+   - 下载architectury依赖 [Architectury API](https://modrinth.com/mod/architectury-api)
+   - 下载kotlin依赖 [Kotlin for Forge](https://modrinth.com/mod/kotlin-for-forge) [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+   - 如果使用Fabric版本，请下载最新版本的 [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
+2. 将下载的模组文件放入你的mods文件夹
+3. 启动Minecraft
+
+### 报告问题
+如果你发现任何问题，请在 [问题追踪器](https://github.com/link-fgfgui/MCLLM/issues) 上报告。
+但我忙,可能不会处理,欢迎PR
+
+</details>
+
+
 ### A mod that provides a LLM interface inside minecraft
 
-### This model knows it's inside Minecraft, and will respond accordingly.
-- The model is limited by ChatGPT's training data, which ended around when 1.17 was released.
-- ChatGPT gpt-3.5-turbo这个模型只知道1.17及以前的事情,其它模型的知识库截止日期请自行查询
+<!-- [![Modrinth](https://img.shields.io/modrinth/dt/mcchatgpt?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/mcchatgpt)
+[![CurseForge](https://cf.way2muchnoise.eu/full_835315_downloads.svg)](https://curseforge.com/minecraft/mc-mods/mcchatgpt) -->
 
+### This model knows it's inside Minecraft and will respond accordingly.
+- The model is limited by the training data of the LLM service provider.
 
 ### Commands
 - Use `/mcchatgpt-auth <token>` with your OpenAI token to authenticate with the API
   - You can get a token from [OpenAI API Keys](https://platform.openai.com/account/api-keys)
-- 使用 `/mcchatgpt-auth <token>` 填入token
-  - deepseek token 获取 [deepseek API Keys](https://platform.deepseek.com/api_keys)
-- Use `/ask <question>` to ask the model a question, the model will respond in the chat with context from the last 10 messages.
-  - Hover over the message to see the number of tokens used and approximate cost of the API request.
+- Use `/ask <question>` to ask the model a question; the model will respond in the chat with context from the last 10 messages.
+  - Use `/setisshowcost true` to append `(Cost: $6.0E-4)` to the end of the output text (default is true).
+    - Hover over the message to see the number of tokens used and the approximate cost of the API request. (Adjust the token price in the configuration file as needed.)
 - Use `/setcontextlevel <0-3>` to set the context level of the model.
   - Higher context levels will provide the model with more information about the world and the player but will cost more per API request.
   - 0: No information (default)
@@ -30,22 +92,6 @@ MC ChatGPT Compatible
   - This will provide the conversation id, and the last message you sent in the conversation.
 
 ### Config
-1. 关闭游戏
-2. 去`.minecraft/config/mcchatgpt.json`修改配置文件
-- deepseek
-  - baseurl `https://api.deepseek.com/`
-  - model `deepseek-chat`&`deepseek-reasoner`
-- 讯飞星火 
-  - baseurl `https://spark-api-open.xf-yun.com/`
-  - model `Lite`(Spark Lite)
-- freeqwq (free)(**China IP** needed)
-  - baseurl `https://api.suanli.cn/`
-  - model `free:QwQ-32B`
-  API KEY `sk-W0rpStc95T7JVYVwDYc29IyirjtpPPby6SozFMQr17m8KWeo`
-
-欢迎补充
-
-
 - model: The model used for the API requests. 
   - Must support Chat Completions otherwise an error will occur.
   - `gpt-3.5-turbo` is the default value.
@@ -56,21 +102,13 @@ MC ChatGPT Compatible
   - `1.0` is the default value.
 
 ### Installation
-1. Download the latest version of the mod from the [releases page](https://github.com/link-fgfgui/MCChatGPT/releases)
-   - If you are using the fabric version, please download the latest version of [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
-2. Place the downloaded mod files in your mods folder
-3. Launch Minecraft
+1. Download the latest version of the mod from the [releases page](https://github.com/link-fgfgui/MCLLM/releases).
+   - Download the Architectury dependency [Architectury API](https://modrinth.com/mod/architectury-api).
+   - Download the Kotlin dependency [Kotlin for Forge](https://modrinth.com/mod/kotlin-for-forge) [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin).
+   - If using the Fabric version, download the latest version of [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api).
+2. Place the downloaded mod files in your mods folder.
+3. Launch Minecraft.
 
 ### Reporting Bugs
-我个人没有在Minecraft中使用LLM的需求,fork仅用做deepseek测试,可以去issues提bug但是我不会修,欢迎PR,当有人接手原项目时此仓库将存档
-
-I personally don't have a need to use LLM in Minecraft. The fork is only used for deepseek testing. You can go to issues to report bugs, but I won't fix them. PRs are welcome. This repository will be archived when someone takes over the [original repo](https://github.com/Bawnorton/MCChatGPT).
-
-### TODO
-0. let "timeout" Duration configurable
-1. let "sendToAdmins" configurable
-2. `<think>` Reason tag visibility configurable (Can be changed in game)
-
-After completing the remaining TODOs, I will begin working on mod support for Minecraft 1.21.1. 
-
-Contributions via pull requests are welcome.
+If you find any bugs, please report them on the [issue tracker](https://github.com/Benjamin-Norton/MCGPT/issues).
+However, I’m busy and may not address them; PRs are welcome.
