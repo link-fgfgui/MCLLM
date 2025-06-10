@@ -71,7 +71,7 @@ MCLLM
 - The model is limited by the training data of the LLM service provider.
 
 ### Commands
-- Use `/mcchatgpt-auth <token>` with your OpenAI token to authenticate with the API
+- Use `/mcllm-auth <token>` with your OpenAI token to authenticate with the API
   - You can get a token from [OpenAI API Keys](https://platform.openai.com/account/api-keys)
 - Use `/ask <question>` to ask the model a question; the model will respond in the chat with context from the last 10 messages.
   - Use `/setisshowcost true` to append `(Cost: $6.0E-4)` to the end of the output text (default is true).
