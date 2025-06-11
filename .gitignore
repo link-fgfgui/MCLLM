@@ -112,8 +112,14 @@ gradle-app.setting
 **/build/
 
 # Common working directory
-run/
+*/run/*
 runs/
+
+# Kotlin Dev PlaceHolder
+!fabric/run/mods
+!fabric/run/mods/kotlinRuntimePlaceholder.jar
+!neoforge/run/mods
+!neoforge/run/mods/kotlinRuntimePlaceholder.jar
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
