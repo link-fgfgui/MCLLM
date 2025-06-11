@@ -1,7 +1,9 @@
 MCLLM
 ================
 
-
+[![Modrinth](https://img.shields.io/modrinth/dt/mcllm?logo=modrinth)](https://modrinth.com/mod/mcllm)
+[![CurseForge](https://img.shields.io/curseforge/dt/1283920?logo=curseforge)](https://curseforge.com/minecraft/mc-mods/mcllm)
+[![build](https://github.com/link-fgfgui/MCLLM/actions/workflows/build.yml/badge.svg)](https://github.com/link-fgfgui/MCLLM/actions/workflows/build.yml)
 
 <details>
 
@@ -9,8 +11,6 @@ MCLLM
 
 ### 一个在Minecraft中提供LLM交互的模组
 
-<!-- [![Modrinth](https://img.shields.io/modrinth/dt/mcchatgpt?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/mcchatgpt)
-[![CurseForge](https://cf.way2muchnoise.eu/full_835315_downloads.svg)](https://curseforge.com/minecraft/mc-mods/mcchatgpt) -->
 
 ### 这个模型知道自己在Minecraft中，并会根据此环境进行响应。
 - 模型受限于LLM服务提供者的训练数据
@@ -63,9 +63,6 @@ MCLLM
 
 
 ### A mod that provides a LLM interface inside minecraft
-
-<!-- [![Modrinth](https://img.shields.io/modrinth/dt/mcchatgpt?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/mcchatgpt)
-[![CurseForge](https://cf.way2muchnoise.eu/full_835315_downloads.svg)](https://curseforge.com/minecraft/mc-mods/mcchatgpt) -->
 
 ### This model knows it's inside Minecraft and will respond accordingly.
 - The model is limited by the training data of the LLM service provider.
