@@ -36,7 +36,9 @@ public class Config {
     @Expose
     @SerializedName("baseurl")
     public String baseurl;
-
+    @Expose
+    @SerializedName("proxy")
+    public String proxy;
     private Config() {
     }
 

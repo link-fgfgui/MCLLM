@@ -34,6 +34,7 @@ public class CommandHandler {
             registerSetIsThinkModelCommand(dispatcher);
             registerSetIsShowCostCommand(dispatcher);
             registerSetBaseurlCommand(dispatcher);
+            registerSetProxyCommand(dispatcher);
         });
     }
 
@@ -105,7 +106,18 @@ public class CommandHandler {
                 }));
         dispatcher.register(builder);
     }
-
+    private static void registerSetProxyCommand(CommandDispatcher<ClientCommandSourceStack> dispatcher) {
+        LiteralArgumentBuilder<ClientCommandSourceStack> builder = ClientCommandRegistrationEvent.literal("mcllm-setproxy")
+                .then(ClientCommandRegistrationEvent.argument("proxy", StringArgumentType.string()).executes(context -> {
+                    ClientCommandSourceStack source = context.getSource();
+                    Config.getInstance().proxy = StringArgumentType.getString(context, "proxy");
+                    ConfigManager.saveConfig();
+                    MCLLM.startService();
+                    source.arch$sendSuccess(() -> Component.translatable("mcllm.set.success"), false);
+                    return 1;
+                }));
+        dispatcher.register(builder);
+    }
     private static void registerListConversationsCommand(CommandDispatcher<ClientCommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<ClientCommandSourceStack> builder = ClientCommandRegistrationEvent.literal("listconversations").executes(context -> {
             ClientCommandSourceStack source = context.getSource();
@@ -220,4 +232,5 @@ public class CommandHandler {
                 }));
         dispatcher.register(builder);
     }
+
 }

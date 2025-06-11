@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.net.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,13 +94,47 @@ public final class MCLLM {
             }
         });
     }
-
+    private static Proxy getProxy(String proxyStr) {
+        Proxy proxy=Proxy.NO_PROXY;
+        if (proxyStr==null){
+            LOGGER.debug("No proxy");
+            return proxy;
+        }
+        if (proxyStr.contains("@")){
+            LOGGER.warn("Unsupported auth proxy, use no proxy");
+            return proxy;
+        }
+        try {
+            URI uri = new URI(proxyStr);
+            Proxy.Type type;
+            String scheme = uri.getScheme();
+            if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+                type = Proxy.Type.HTTP;
+            } else if ("socks5".equalsIgnoreCase(scheme)) {
+                type = Proxy.Type.SOCKS;
+            }else{
+                LOGGER.error("Unsupported scheme: {}", scheme);
+                return proxy;
+            }
+            String host = uri.getHost();
+            int port = uri.getPort();
+            if (host == null || port == -1) {
+                LOGGER.error("URI is missing host or port: {}", uri);
+                return proxy;
+            }
+            return new Proxy(type, new InetSocketAddress(host, port));
+        } catch (URISyntaxException e) {
+            LOGGER.error("ProxyString incorrect: {}", e.getMessage());
+            return proxy;
+        }
+    }
     public static void startService() {
         client = OpenAIOkHttpClient
                 .builder()
                 .apiKey(SecureTokenStorage.decrypt(Config.getInstance().secret, Config.getInstance().token))
                 .baseUrl(Config.getInstance().baseurl)
                 .timeout(Duration.ofSeconds(Config.getInstance().timeout))
+                .proxy(getProxy(Config.getInstance().proxy))
                 .build();
 
     }
