@@ -4,6 +4,7 @@ import com.bawnorton.mcchatgpt.config.Config;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -68,12 +69,7 @@ public class MarkdownRenderer {
 
                 result.add(Component.literal(" (Costs: $" + cost + ")")
                         .setStyle(
-                                Style.EMPTY.withHoverEvent(
-                                        new HoverEvent(
-                                                HoverEvent.Action.SHOW_TEXT,
-                                                Component.translatable("mcllm.token.usage", tokenUsed, cost)
-                                        )
-                                )
+                                Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.translatable("mcllm.token.usage", tokenUsed, cost)))
                         ));
             }
         }
@@ -148,7 +144,7 @@ public class MarkdownRenderer {
                         .withStyle(style -> style
                                 .withColor(TextColor.fromRgb(0x55AAFF))
                                 .withUnderlined(true)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group(9)))));
+                                .withClickEvent(new ClickEvent.OpenUrl(URI.create(matcher.group(9))))));
             } else if (matcher.group(10) != null) { // plain + inline code
                 components.addAll(parseInlineCode(matcher.group(10)));
             }
@@ -184,8 +180,7 @@ public class MarkdownRenderer {
         return Component.literal("[think] ")
                 .setStyle(
                         Style.EMPTY.withHoverEvent(
-                                new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
+                                new HoverEvent.ShowText(
                                         Component.translatable("mcllm.reply.think").append(reason)
                                 )
                         )

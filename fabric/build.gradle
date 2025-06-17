@@ -28,18 +28,46 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
     modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
 
-    implementation "com.openai:openai-java:2.5.0"
-    shadowBundle "com.openai:openai-java:2.5.0"
+    implementation "com.openai:openai-java:$rootProject.openai_java_version"
+    shadowBundle "com.openai:openai-java:$rootProject.openai_java_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
+def toOperatorBased(String mavenRange) {
+    def m = mavenRange =~ /([\[\(])\s*([^,]+)\s*,\s*([^,\]\)]*)\s*([\]\)])/
+    if (!m) return mavenRange
+
+    def includeLower = m[0][1] == '['
+    def includeUpper = m[0][4] == ']'
+    def lower = m[0][2].trim()
+    def upper = m[0][3].trim()
+
+    def parts = []
+    parts << (includeLower ? ">=${lower}" : ">${lower}")
+    if (upper) {
+        parts << (includeUpper ? "<=${upper}" : "<${upper}")
+    }
+    return parts.join(' ')
+}
+// 读取、转换并覆盖
+project.minecraft_version_range = toOperatorBased(project.minecraft_version_range)
+project.architectury_version_range = toOperatorBased(project.architectury_version_range)
+project.fabric_loader_version_range = toOperatorBased(project.fabric_loader_version_range)
+project.neoforge_loader_version_range = toOperatorBased(project.neoforge_loader_version_range)
+project.kotlin_runtime_version_range_forge = toOperatorBased(project.kotlin_runtime_version_range_forge)
+project.authors = project.authors
+        .split(',')                    // 拆分
+        .collect { it.trim() }         // 去掉空白
+        .collect { "\"${it}\"" }       // 给每个名字加上双引号
+        .join(',')                     // 用逗号拼回
+
 processResources {
     inputs.property 'version', project.version
 
-    filesMatching('fabric.mod.json') {
-        expand version: project.version
+    filesMatching("fabric.mod.json") {
+        expand(project.properties)
     }
 }
 

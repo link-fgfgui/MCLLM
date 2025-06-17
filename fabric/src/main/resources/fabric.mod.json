@@ -1,37 +1,33 @@
 {
   "schemaVersion": 1,
-  "id": "mcllm",
-  "version": "${version}",
-  "name": "MCLLM",
-  "description": "MCLLM is a fork of MCChatGPT for players who want to use non-OpenAI LLM servers. You are not locked into OpenAI's service and can use alternatives like DeepSeek, Claude, Gemini, among others.",
-  "authors": [
-    "link-fgfgui",
-    "Bawnorton"
-  ],
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [${authors}],
   "contact": {
-    "homepage": "https://github.com/link-fgfgui/MCLLM"
+    "homepage": "${homepageURL}"
   },
-  "license": "GPL-3.0",
-  "icon": "assets/mcllm/icon.png",
+  "license": "${license}",
+  "icon": "assets/${mod_id}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.linkfgfgui.mcllm.fabric.McllmFabric"
+      "io.github.linkfgfgui.${mod_id}.fabric.${mod_id}Fabric"
     ],
     "client": [
-      "io.github.linkfgfgui.mcllm.fabric.client.McllmFabricClient"
+      "io.github.linkfgfgui.${mod_id}.fabric.client.${mod_id}FabricClient"
     ]
   },
   "mixins": [
-    "mcllm.mixins.json"
+    "${mod_id}.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.14",
-    "minecraft": "~1.21.1",
-    "java": ">=21",
-    "architectury": ">=13.0.8",
+    "fabricloader": "${fabric_loader_version_range}",
+    "minecraft": "${minecraft_version_range}",
+    "architectury": "${architectury_version_range}",
     "fabric-api": "*",
-    "fabric-language-kotlin": ">=1.13.3+kotlin.2.1.21"
+    "fabric-language-kotlin": "${kotlin_runtime_version_range_fabric}"
   },
   "suggests": {
     "another-mod": "*"

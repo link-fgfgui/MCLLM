@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -27,6 +28,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -47,6 +49,7 @@ import java.math.BigDecimal;
 import java.net.*;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -212,7 +215,7 @@ public final class MCLLM {
         Context.Builder contextBuilder = Context.builder();
         switch (Config.getInstance().contextLevel) {
             case 3:
-                List<LivingEntity> nearbyEntities = player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT.selector(entity -> entity != player), player, player.getBoundingBox().inflate(64));
+                List<LivingEntity> nearbyEntities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(64),entity -> !entity.getUUID().equals(player.getUUID()));
                 if (target instanceof EntityHitResult entityHitResult) {
                     Entity entity = entityHitResult.getEntity();
                     if (entity instanceof LivingEntity livingEntity) {
@@ -233,14 +236,22 @@ public final class MCLLM {
                 dimension.unwrapKey().ifPresent(dimensionKey -> contextBuilder.addDimension(dimensionKey.location().getPath()));
 
             case 1:
-                List<ItemStack> playerInventory = player.getInventory().items;
+                List<ItemStack> playerInventory = new ArrayList<>();
+                Inventory inv = player.getInventory();
+                for (int i = 0; i < inv.getContainerSize(); i++) {
+                    ItemStack stack = inv.getItem(i);
+                    playerInventory.add(stack);
+                }
                 List<ItemStack> playerMainInventory = playerInventory.subList(9, playerInventory.size());
                 List<ItemStack> playerHotbar = playerInventory.subList(0, 9);
 
                 contextBuilder
                         .addInventory("Player", playerMainInventory)
                         .addHotbar(playerHotbar)
-                        .addArmor(player.getArmorSlots())
+                        .addArmor(Collections.singleton(player.getItemBySlot(EquipmentSlot.HEAD)))
+                        .addArmor(Collections.singleton(player.getItemBySlot(EquipmentSlot.CHEST)))
+                        .addArmor(Collections.singleton(player.getItemBySlot(EquipmentSlot.LEGS)))
+                        .addArmor(Collections.singleton(player.getItemBySlot(EquipmentSlot.FEET)))
                         .addMainHand(player.getMainHandItem())
                         .addOffHand(player.getOffhandItem())
                         .addPlayerPosition(player.blockPosition());
@@ -311,11 +322,11 @@ public final class MCLLM {
         } catch (RuntimeException e) {
             LOGGER.error("Error while communicating with Server", e);
             if (e.getMessage().toLowerCase().contains("exceeded your current quota")) {
-                player.displayClientMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://platform.openai.com/account/usage")).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("https://platform.openai.com/account/usage")))), false);
+                player.displayClientMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://platform.openai.com/account/usage"))).withHoverEvent(new HoverEvent.ShowText(Component.literal("https://platform.openai.com/account/usage")))), false);
             } else if (e.getMessage().toLowerCase().contains("maximum context length")) {
-                player.displayClientMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.getMessage())))), false);
+                player.displayClientMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText( Component.literal(e.getMessage())))), false);
             } else {
-                player.displayClientMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.getMessage())))), false);
+                player.displayClientMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText( Component.literal(e.getMessage())))), false);
             }
         }
     }
