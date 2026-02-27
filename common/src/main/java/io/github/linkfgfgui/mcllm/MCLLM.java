@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -47,11 +48,13 @@ import java.math.BigDecimal;
 import java.net.*;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.math.MathContext;
+import java.util.stream.Collectors;
 
 public final class MCLLM {
     public static final String MOD_ID = "mcllm";
@@ -94,13 +97,14 @@ public final class MCLLM {
             }
         });
     }
+
     private static Proxy getProxy(String proxyStr) {
-        Proxy proxy=Proxy.NO_PROXY;
-        if (proxyStr==null){
+        Proxy proxy = Proxy.NO_PROXY;
+        if (proxyStr == null) {
             LOGGER.debug("No proxy");
             return proxy;
         }
-        if (proxyStr.contains("@")){
+        if (proxyStr.contains("@")) {
             LOGGER.warn("Unsupported auth proxy, use no proxy");
             return proxy;
         }
@@ -112,7 +116,7 @@ public final class MCLLM {
                 type = Proxy.Type.HTTP;
             } else if ("socks5".equalsIgnoreCase(scheme)) {
                 type = Proxy.Type.SOCKS;
-            }else{
+            } else {
                 LOGGER.error("Unsupported scheme: {}", scheme);
                 return proxy;
             }
@@ -128,6 +132,7 @@ public final class MCLLM {
             return proxy;
         }
     }
+
     public static void startService() {
         client = OpenAIOkHttpClient
                 .builder()
@@ -179,7 +184,7 @@ public final class MCLLM {
         conversations.add(new Conversation());
         conversationIndex = conversations.size() - 1;
         String contentText = "Context: You are an AI assistant in the game Minecraft version " +
-                SharedConstants.getCurrentVersion().getName() +
+                SharedConstants.getCurrentVersion().name() +
                 ". Limit your responses to 256 characters. Assume the player cannot access commands unless" +
                 " explicitly asked for them. Do not simulate conversations";
         ChatCompletionMessageParam params = ChatCompletionMessageParam
@@ -212,7 +217,7 @@ public final class MCLLM {
         Context.Builder contextBuilder = Context.builder();
         switch (Config.getInstance().contextLevel) {
             case 3:
-                List<LivingEntity> nearbyEntities = player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT.selector(entity -> entity != player), player, player.getBoundingBox().inflate(64));
+                List<LivingEntity> nearbyEntities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(64), e -> e != player);
                 if (target instanceof EntityHitResult entityHitResult) {
                     Entity entity = entityHitResult.getEntity();
                     if (entity instanceof LivingEntity livingEntity) {
@@ -223,24 +228,27 @@ public final class MCLLM {
                 contextBuilder.addEntities(nearbyEntities);
             case 2:
                 Holder<Biome> biome = player.level().getBiome(player.blockPosition());
-                biome.unwrapKey().ifPresent(biomeKey -> contextBuilder.addBiome(biomeKey.location().getPath()));
+                biome.unwrapKey().ifPresent(biomeKey -> contextBuilder.addBiome(biomeKey.identifier().getPath()));
                 Block block = null;
                 if (target instanceof BlockHitResult blockHitResult) {
                     block = player.level().getBlockState(blockHitResult.getBlockPos()).getBlock();
                 }
                 contextBuilder.addBlockTarget(block);
                 Holder<DimensionType> dimension = player.level().dimensionTypeRegistration();
-                dimension.unwrapKey().ifPresent(dimensionKey -> contextBuilder.addDimension(dimensionKey.location().getPath()));
+                dimension.unwrapKey().ifPresent(dimensionKey -> contextBuilder.addDimension(dimensionKey.identifier().getPath()));
 
             case 1:
-                List<ItemStack> playerInventory = player.getInventory().items;
+                List<ItemStack> playerInventory = player.getInventory().getNonEquipmentItems();
                 List<ItemStack> playerMainInventory = playerInventory.subList(9, playerInventory.size());
                 List<ItemStack> playerHotbar = playerInventory.subList(0, 9);
 
                 contextBuilder
                         .addInventory("Player", playerMainInventory)
                         .addHotbar(playerHotbar)
-                        .addArmor(player.getArmorSlots())
+                        .addArmor(Arrays.stream(EquipmentSlot.values())
+                                .filter(slot -> slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
+                                .map(player::getItemBySlot)
+                                .toList())
                         .addMainHand(player.getMainHandItem())
                         .addOffHand(player.getOffhandItem())
                         .addPlayerPosition(player.blockPosition());
@@ -276,8 +284,8 @@ public final class MCLLM {
             ChatCompletion chatCompletion = client.chat().completions().create(params);
 
             Optional<CompletionUsage> usage = chatCompletion.usage();
-            long tokensUsed = 0;
-            float cost = 0;
+            long tokensUsed;
+            float cost;
             if (usage.isPresent()) {
                 tokensUsed = usage.get().totalTokens();
                 MathContext sigfigContext = new MathContext(1);
@@ -286,6 +294,9 @@ public final class MCLLM {
                 cost = costDecimal.floatValue();
 
                 LOGGER.info("Used {} tokens (${})", tokensUsed, cost);
+            } else {
+                cost = 0;
+                tokensUsed = 0;
             }
             String replyMessage = chatCompletion.choices().getFirst().message().content().orElse("null");
             JsonValue reasoning_content_json_value = chatCompletion.choices().getFirst().message()._additionalProperties().get("reasoning_content");
@@ -296,9 +307,12 @@ public final class MCLLM {
                 reasoning_content = reasoning_content_json_value.toString();
             }
             LOGGER.debug("reply: {}", replyMessage);
-            player.displayClientMessage(
-                    MarkdownRenderer.render(replyMessage, usage.isPresent(), tokensUsed, cost, reasoning_content),
-                    false);
+            Minecraft.getInstance().execute(() -> {
+                player.displayClientMessage(
+                        MarkdownRenderer.render(replyMessage, usage.isPresent(), tokensUsed, cost, reasoning_content),
+                        false);
+            });
+
             ChatCompletionMessageParam replyParam = ChatCompletionMessageParam
                     .ofAssistant(ChatCompletionAssistantMessageParam
                             .builder()
@@ -310,13 +324,15 @@ public final class MCLLM {
             }
         } catch (RuntimeException e) {
             LOGGER.error("Error while communicating with Server", e);
-            if (e.getMessage().toLowerCase().contains("exceeded your current quota")) {
-                player.displayClientMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://platform.openai.com/account/usage")).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("https://platform.openai.com/account/usage")))), false);
-            } else if (e.getMessage().toLowerCase().contains("maximum context length")) {
-                player.displayClientMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.getMessage())))), false);
-            } else {
-                player.displayClientMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(e.getMessage())))), false);
-            }
+            Minecraft.getInstance().execute(() -> {
+                if (e.getMessage().toLowerCase().contains("exceeded your current quota")) {
+                    player.displayClientMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://platform.openai.com/account/usage"))).withHoverEvent(new HoverEvent.ShowText(Component.literal("https://platform.openai.com/account/usage")))), false);
+                } else if (e.getMessage().toLowerCase().contains("maximum context length")) {
+                    player.displayClientMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))), false);
+                } else {
+                    player.displayClientMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))), false);
+                }
+            });
         }
     }
 

@@ -7,7 +7,7 @@ license = "GNU GPL 3.0"
 modId = "mcllm"
 version = "${version}"
 displayName = "MCLLM"
-authors = "link-fgfgui,Bawnorton"
+authors = "link-fgfgui, Bawnorton"
 description = '''
 MCLLM is a fork of MCChatGPT for players who want to use non-OpenAI LLM servers. You are not locked into OpenAI's service and can use alternatives like DeepSeek, Claude, Gemini, among others.
 '''
@@ -36,7 +36,7 @@ side = "BOTH"
 
 [[dependencies.mcllm]]
 modId = "kotlinforforge"
-type = "required"
+type = "optional"
 versionRange = "[5.8,)"
 ordering = "AFTER"
 side = "BOTH"

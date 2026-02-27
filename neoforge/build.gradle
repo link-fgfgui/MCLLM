@@ -1,5 +1,5 @@
 plugins {
-    id 'io.github.goooler.shadow'
+    id 'com.gradleup.shadow'
 }
 architectury {
     platformSetupLoomIde()
@@ -21,6 +21,7 @@ configurations {
         canBeResolved = true
         canBeConsumed = false
     }
+    bundleInside
 }
 
 repositories {
@@ -35,12 +36,19 @@ dependencies {
 
     modImplementation "dev.architectury:architectury-neoforge:$rootProject.architectury_api_version"
 
-    implementation "com.openai:openai-java:2.5.0"
-    forgeRuntimeLibrary "com.openai:openai-java:2.5.0"
-    shadowBundle "com.openai:openai-java:2.5.0"
-
+    implementation("com.openai:openai-java:$rootProject.openai_java_version")
+    bundleInside("com.openai:openai-java:$rootProject.openai_java_version"){
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'org.apache.httpcomponents.client5'
+        exclude group: 'org.apache.httpcomponents.core5'
+        exclude group: 'org.slf4j'
+    }
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+}
+
+configurations.bundleInside.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+    dependencies.add("include", artifact.moduleVersion.id.toString())
 }
 
 processResources {
@@ -52,65 +60,6 @@ processResources {
 }
 
 shadowJar {
-    minimize()
-    exclude 'com/github/victools/**'
-    exclude 'com/openai/services/async/**'
-    exclude 'com/openai/models/evals/**'
-    exclude 'com/openai/models/responses/**'
-    exclude 'com/openai/models/batches/**'
-    exclude 'com/openai/models/evals/**'
-    exclude 'com/openai/models/audio/**'
-    exclude 'com/openai/models/containers/**'
-    exclude 'com/openai/models/embeddings/**'
-    exclude 'com/openai/models/files/**'
-    exclude 'com/openai/models/finetuning/**'
-    exclude 'com/openai/models/graders/**'
-    exclude 'com/openai/models/images/**'
-    exclude 'com/openai/models/moderations/**'
-    exclude 'com/openai/models/uploads/**'
-    exclude 'com/openai/models/vectorstores/**'
-    exclude 'com/openai/models/chat/completions/messages/**'
-    exclude 'com/openai/models/models/**'
-    exclude 'com/openai/services/blocking/audio/**'
-    exclude 'com/openai/services/blocking/containers/**'
-    exclude 'com/openai/services/blocking/containers/files/**'
-    exclude 'com/openai/services/blocking/evals/**'
-    exclude 'com/openai/services/blocking/evals/runs/**'
-    exclude 'com/openai/services/blocking/finetuning/**'
-    exclude 'com/openai/services/blocking/finetuning/alpha/**'
-    exclude 'com/openai/services/blocking/finetuning/checkpoints/**'
-    exclude 'com/openai/services/blocking/finetuning/jobs/**'
-    exclude 'com/openai/services/blocking/graders/**'
-    exclude 'com/openai/services/blocking/responses/**'
-    exclude 'com/openai/services/blocking/uploads/**'
-    exclude 'com/openai/services/blocking/vectorstores/**'
-    exclude 'okhttp3/internal/platform/android/**'
-    exclude 'okhttp3/internal/publicsuffix/**'
-    exclude 'okhttp3/internal/ws/**'
-    exclude 'okhttp3/logging/**'
-    exclude 'com/fasterxml/classmate/**'
-    exclude 'com/fasterxml/jackson/core/filter/**'
-    exclude 'com/fasterxml/jackson/core/format/**'
-    exclude 'com/fasterxml/jackson/core/internal/**'
-    exclude 'com/fasterxml/jackson/core/internal/shaded/**'
-    exclude 'com/fasterxml/jackson/core/internal/shaded/fdp/**'
-    exclude 'com/fasterxml/jackson/core/internal/shaded/fdp/v2_18_2/**'
-    exclude 'com/fasterxml/jackson/core/io/schubfach/**'
-    exclude 'com/fasterxml/jackson/databind/jdk14/**'
-    exclude 'com/fasterxml/jackson/datatype/jsr310/util/**'
-    exclude 'org/apache/hc/**'
-    exclude 'org/slf4j/**'
-    exclude 'org/apache/logging/log4j/**'
-    exclude 'org/objectweb/asm/**'
-    exclude 'com/google/errorprone/**'
-    exclude 'org/checkerframework/**'
-    exclude 'org/jetbrains/annotations/**'
-    exclude 'org/junit/**'
-    exclude 'kotlin/**'
-    exclude 'mozilla/**'
-    exclude 'META-INF/com.android.tools/**'
-    exclude 'META-INF/proguard/**'
-    exclude 'META-INF/versions/**'
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
 }

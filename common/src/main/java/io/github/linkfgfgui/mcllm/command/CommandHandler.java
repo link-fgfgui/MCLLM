@@ -126,7 +126,7 @@ public class CommandHandler {
             for (int i = 0; i < conversations.size(); i++) {
                 Conversation conversation = conversations.get(i);
                 if (conversation.messageCount() < 2) continue;
-                String lastQuestion = conversation.getPreviewMessage().toString();
+                String lastQuestion = String.valueOf(conversation.getPreviewMessage());
                 int finalI = i;
                 source.arch$sendSuccess(() -> Component.literal("§b[mcllm]: §r" + (finalI + 1) + ": " + lastQuestion), false);
             }
