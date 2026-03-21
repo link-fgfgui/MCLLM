@@ -4,7 +4,7 @@ MCLLM
 [![Modrinth](https://img.shields.io/modrinth/dt/mcllm?logo=modrinth)](https://modrinth.com/mod/mcllm)
 [![CurseForge](https://img.shields.io/curseforge/dt/1283920?logo=curseforge)](https://curseforge.com/minecraft/mc-mods/mcllm)
 [![build](https://github.com/link-fgfgui/MCLLM/actions/workflows/build.yml/badge.svg)](https://github.com/link-fgfgui/MCLLM/actions/workflows/build.yml)
-
+[![MCMOD](https://img.shields.io/badge/MC百科-页面-blue)](https://www.mcmod.cn/class/20154.html)
 <details>
 
 <summary>中文-简体 zh-Hans</summary>
