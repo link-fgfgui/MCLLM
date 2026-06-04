@@ -92,7 +92,7 @@ public final class MCLLM {
             if (!notAuthed(false)) {
                 Minecraft mc = Minecraft.getInstance();
                 if (mc.player != null) {
-                    mc.player.displayClientMessage(Component.translatable("mcllm.auth.success"), false);
+                    mc.player.sendSystemMessage(Component.translatable("mcllm.auth.success"));
                 }
             }
         });
@@ -152,8 +152,8 @@ public final class MCLLM {
         if (client == null) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && prompt) {
-                player.displayClientMessage(Component.translatable("mcllm.auth.message1"), false);
-                player.displayClientMessage(Component.translatable("mcllm.auth.message2"), false);
+                player.sendSystemMessage(Component.translatable("mcllm.auth.message1"));
+                player.sendSystemMessage(Component.translatable("mcllm.auth.message2"));
             }
             return true;
         }
@@ -308,9 +308,8 @@ public final class MCLLM {
             }
             LOGGER.debug("reply: {}", replyMessage);
             Minecraft.getInstance().execute(() -> {
-                player.displayClientMessage(
-                        MarkdownRenderer.render(replyMessage, usage.isPresent(), tokensUsed, cost, reasoning_content),
-                        false);
+                player.sendSystemMessage(
+                        MarkdownRenderer.render(replyMessage, usage.isPresent(), tokensUsed, cost, reasoning_content));
             });
 
             ChatCompletionMessageParam replyParam = ChatCompletionMessageParam
@@ -326,11 +325,11 @@ public final class MCLLM {
             LOGGER.error("Error while communicating with Server", e);
             Minecraft.getInstance().execute(() -> {
                 if (e.getMessage().toLowerCase().contains("exceeded your current quota")) {
-                    player.displayClientMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://platform.openai.com/account/usage"))).withHoverEvent(new HoverEvent.ShowText(Component.literal("https://platform.openai.com/account/usage")))), false);
+                    player.sendSystemMessage(Component.translatable("mcllm.ask.quota").setStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://platform.openai.com/account/usage"))).withHoverEvent(new HoverEvent.ShowText(Component.literal("https://platform.openai.com/account/usage")))));
                 } else if (e.getMessage().toLowerCase().contains("maximum context length")) {
-                    player.displayClientMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))), false);
+                    player.sendSystemMessage(Component.translatable("mcllm.ask.excessive.context").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))));
                 } else {
-                    player.displayClientMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))), false);
+                    player.sendSystemMessage(Component.translatable("mcllm.ask.error").setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))));
                 }
             });
         }

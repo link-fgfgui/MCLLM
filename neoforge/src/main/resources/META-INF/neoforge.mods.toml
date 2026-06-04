@@ -16,30 +16,30 @@ MCLLM is a fork of MCChatGPT for players who want to use non-OpenAI LLM servers.
 [[dependencies.mcllm]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21,)"
+versionRange = "[26,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.mcllm]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,)"
+versionRange = "[26.1,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.mcllm]]
 modId = "architectury"
 type = "required"
-versionRange = "[13.0.8,)"
+versionRange = "[20.0.4,)"
 ordering = "AFTER"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.mcllm]]
 modId = "kotlinforforge"
 type = "optional"
 versionRange = "[5.8,)"
 ordering = "AFTER"
-side = "BOTH"
+side = "CLIENT"
 
 [[mixins]]
 config = "mcllm.mixins.json"
